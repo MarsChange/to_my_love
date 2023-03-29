@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Ms.Cui</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+	<h1>
+        <span class="text"></span>
+    </h1>
+    <div class="timer" id="timer">
+        <b id="d"></b> 天 <b id="h"></b> 小时 <b id="m"></b> 分 <b id="s"></b> 秒啦！
+    </div>
+
+    <script>
+        const text = document.querySelector('.text');
+        const txt  =["Hello! 小崔宝宝~","你好呀！这是你的猪猪我专门做给你的网页！","特别提醒！这是专属于你的网页哦！","或许你心里会有疑惑...","为什么我会做这样的一个网页呢？",
+                    "其实我一开始并不知道应该要送一些什么有仪式感的东西...","在一个moment，我突然想起一件事！","在2022年8月4日七夕节那天，你给我发了一个链接...","打开一看，是一个充满爱意的网页动画...",
+                    "你说这个是“程序员的浪漫”，好甜好甜...","那一刻后，我想...","我也可以做一个网页动画送给你！","我不清楚宝宝是否喜欢这样的礼物形式...","但我希望，这样的浪漫能让你开心起来...",
+                    "半周年纪念日之际，我想大声地喊一句...","宝宝，我爱你！！！","我们要一直在一起，永远永远！","宝宝，你还记得吗？","从2022年10月2日22点42分接通电话算起","我们携手并进走过了"]; 
+        
+        var word_length=0;
+        var index= 0;
+        var huan = true;
+        
+        function sleep(ms) {
+            let start = Date.now()
+            let end = start + ms
+            while(true) {
+                if(Date.now() > end) {
+                    return
+                }   
+            }
+        }
+        setInterval(function show_word(){
+            if(huan && index<=txt.length -  1){      
+                text.innerHTML = txt[index].slice(0,++word_length);
+                console.log(word_length);
+            }
+            else if(!huan && index<txt.length - 1){
+                text.innerHTML = txt[index].slice(0,word_length--);
+                console.log(word_length);
+            }
+
+            if(word_length==txt[index].length+3)
+            {
+                huan = false;
+            }
+            else if(word_length==txt[index].length+2 && index == txt.length - 1){
+                clearInterval(show_word);
+                var show = document.getElementById("timer");
+                show.style.display = "block";
+            }
+            else if(word_length<0)
+            {
+                word_length = 0;
+                huan = true;
+                index++;
+                if(index>=txt.length)
+                {
+                    clearInterval(show_word);
+                    sleep(5000);
+                    var show = document.getElementById("timer");
+                    show.style.display = "block";
+                }
+            }
+
+        },150)
+
+        function timer() {
+            var start = new Date(2022, 10, 2, 22, 42);
+            var t = new Date() - start;
+            var h = ~~(t / 1000 / 60 / 60 % 24);
+            if (h < 10) {
+                h = "0" + h;
+            }
+            var m = ~~(t / 1000 / 60 % 60);
+            if (m < 10) {
+                m = "0" + m;
+            }
+
+            var s = ~~(t / 1000 % 60);
+            if (s < 10) {
+                s = "0" + s;
+            }
+            document.getElementById('d').innerHTML = ~~(t / 1000 / 60 / 60 / 24);
+            document.getElementById('h').innerHTML = h;
+            document.getElementById('m').innerHTML = m;
+            document.getElementById('s').innerHTML = s;
+        }
+        timer();
+        setInterval(timer, 1000);
+
+    </script>
+	<script>
+		const canvas = document.getElementById("canvas");
+		const ctx = canvas.getContext("2d");
+
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+
+		class Bubble {
+			constructor(x, y, radius, color) {
+				this.x = x;
+				this.y = y;
+				this.radius = radius;
+				this.color = color;
+				this.dx = Math.random() - 0.5;
+				this.dy = Math.random() - 0.5;
+				this.speed = Math.random() * 5 + 1;
+			}
+
+			draw() {
+				ctx.beginPath();
+				ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+				ctx.fillStyle = this.color;
+				ctx.fill();
+			}
+
+			update() {
+				if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+					this.dx = -this.dx;
+				}
+				if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
+					this.dy = -this.dy;
+				}
+				this.x += this.dx * this.speed;
+				this.y += this.dy * this.speed;
+			}
+		}
+
+		const bubbles = [];
+
+		function init() {
+			for (let i = 0; i < 50; i++) {
+				const radius = Math.random() * 50 + 10;
+				const x = Math.random() * (canvas.width - radius * 2) + radius;
+				const y = Math.random() * (canvas.height - radius * 2) + radius;
+				const color = `hsla(${Math.random() * 360}, 100%, 50%, 0.8)`;
+				bubbles.push(new Bubble(x, y, radius, color));
+			}
+		}
+
+		function animate() {
+			requestAnimationFrame(animate);
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			bubbles.forEach((bubble) => {
+				bubble.draw();
+				bubble.update();
+			});
+		}
+
+		init();
+		animate();
+	</script>
+</body>
+</html>
